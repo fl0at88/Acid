@@ -4,7 +4,6 @@
 #include "Engine/Engine.hpp"
 
 typedef struct ALCdevice_struct ALCdevice;
-
 typedef struct ALCcontext_struct ALCcontext;
 
 namespace acid
@@ -20,7 +19,7 @@ namespace acid
 	/// A module used for loading, managing and playing a variety of different sound types.
 	/// </summary>
 	class ACID_EXPORT Audio :
-		public IModule
+		public Module<Audio>
 	{
 	private:
 		ALCdevice *m_alDevice;
@@ -29,12 +28,6 @@ namespace acid
 		float m_masterGain;
 		std::map<SoundType, float> m_gains;
 	public:
-		/// <summary>
-		/// Gets this engine instance.
-		/// </summary>
-		/// <returns> The current module instance. </returns>
-		static Audio *Get() { return Engine::Get()->GetModule<Audio>(); }
-
 		Audio();
 
 		~Audio();

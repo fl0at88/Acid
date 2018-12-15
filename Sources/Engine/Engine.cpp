@@ -2,24 +2,20 @@
 
 namespace acid
 {
+	using HighResolutionClock = std::chrono::high_resolution_clock;
+	using MicrosecondsType = std::chrono::duration<int64_t, std::micro>;
+
 	Engine *Engine::INSTANCE = nullptr;
-	std::chrono::time_point<HighResolutionClock> Engine::TIME_START = HighResolutionClock::now();
+	std::chrono::time_point<HighResolutionClock> TIME_START = HighResolutionClock::now();
 
 	Engine::Engine(const bool &emptyRegister) :
-		m_timeOffset(Time::ZERO),
-		m_moduleRegister(ModuleRegister()),
-		m_moduleUpdater(ModuleUpdater()),
-		m_fpsLimit(-1.0f),
-		m_initialized(false),
+		m_moduleManager(ModuleManager(emptyRegister)),
 		m_running(true),
-		m_error(false)
+		m_error(false),
+		m_timeOffset(Time::ZERO),
+		m_fpsLimit(-1.0f)
 	{
 		INSTANCE = this;
-
-		if (!emptyRegister)
-		{
-			m_moduleRegister.FillRegister();
-		}
 	}
 
 	Engine::~Engine()
@@ -32,7 +28,7 @@ namespace acid
 		while (m_running)
 		{
 			// TODO: Catch exceptions.
-			m_moduleUpdater.Update(m_moduleRegister);
+			m_moduleManager.Update();
 		}
 
 		return EXIT_SUCCESS;

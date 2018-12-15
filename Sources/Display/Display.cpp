@@ -494,7 +494,7 @@ namespace acid
 		glfwWindowHint(GLFW_STENCIL_BITS, 8); // Fixes 16 bit stencil bits in macOS.
 		glfwWindowHint(GLFW_STEREO, GLFW_FALSE); // No stereo view!
 
-		// Get the resolution of the primary monitor.
+		// Gets the resolution of the primary monitor.
 		GLFWmonitor *monitor = glfwGetPrimaryMonitor();
 		const GLFWvidmode *videoMode = glfwGetVideoMode(monitor);
 

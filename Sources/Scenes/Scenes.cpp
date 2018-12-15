@@ -4,7 +4,8 @@ namespace acid
 {
 	Scenes::Scenes() :
 		m_scene(nullptr),
-		m_componentRegister(ComponentRegister())
+		m_componentRegister(ComponentRegister()),
+		m_modelRegister(ModelRegister())
 	{
 	}
 
@@ -15,10 +16,10 @@ namespace acid
 			return;
 		}
 
-		if (!m_scene->IsStarted())
+		if (!m_scene->m_started)
 		{
 			m_scene->Start();
-			m_scene->SetStarted(true);
+			m_scene->m_started = true;
 		}
 
 		m_scene->Update();

@@ -12,23 +12,17 @@ namespace acid
 	/// A module used for managing resources.
 	/// </summary>
 	class ACID_EXPORT Resources :
-		public IModule
+		public Module<Resources>
 	{
 	private:
 		std::vector<std::shared_ptr<IResource>> m_resources;
 		Timer m_timerPurge;
 	public:
-		/// <summary>
-		/// Gets this engine instance.
-		/// </summary>
-		/// <returns> The current module instance. </returns>
-		static Resources *Get() { return Engine::Get()->GetModule<Resources>(); }
-
 		Resources();
 
 		void Update() override;
 
-		std::shared_ptr<IResource> Get(const std::string &filename);
+		std::shared_ptr<IResource> Find(const std::string &filename);
 
 		void Add(const std::shared_ptr<IResource> &resource);
 

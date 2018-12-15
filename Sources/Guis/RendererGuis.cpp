@@ -28,7 +28,7 @@ namespace acid
 				continue;
 			}
 
-			Gui *object = dynamic_cast<Gui *>(screenObject);
+			auto object = dynamic_cast<Gui *>(screenObject);
 
 			if (object != nullptr)
 			{

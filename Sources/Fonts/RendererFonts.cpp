@@ -27,7 +27,7 @@ namespace acid
 				continue;
 			}
 
-			Text *object = dynamic_cast<Text *>(screenObject);
+			auto object = dynamic_cast<Text *>(screenObject);
 
 			if (object != nullptr)
 			{

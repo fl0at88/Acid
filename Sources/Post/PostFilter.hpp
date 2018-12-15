@@ -44,7 +44,7 @@ namespace acid
 
 		void SetAttachment(const std::string &descriptorName, IDescriptor *descriptor);
 
-		bool RemoveAttachment(const std::string &name);
+		void RemoveAttachment(const std::string &name);
 	protected:
 		/// <summary>
 		/// Used instead of `m_descriptorSet.Push()` in instances where a writeColour is the same as samplerColour in a shader.

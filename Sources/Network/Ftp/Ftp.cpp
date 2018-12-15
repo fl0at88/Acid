@@ -23,7 +23,7 @@ namespace acid
 			return FtpResponse(FTP_RESPONSE_CONNECTION_FAILED);
 		}
 
-		// Get the response to the connection.
+		// Gets the response to the connection.
 		return GetResponse();
 	}
 
@@ -84,7 +84,7 @@ namespace acid
 				// Receive the listing.
 				data.Receive(directoryData);
 
-				// Get the response from the server.
+				// Gets the response from the server.
 				response = GetResponse();
 			}
 		}
@@ -173,7 +173,7 @@ namespace acid
 				// Close the file.
 				file.close();
 
-				// Get the response from the server.
+				// Gets the response from the server.
 				response = GetResponse();
 
 				// If the download was unsuccessful, delete the partial file.
@@ -190,7 +190,7 @@ namespace acid
 	FtpResponse Ftp::Upload(const std::string &localFile, const std::string &remotePath, FtpTransferMode mode,
 	                        bool append)
 	{
-		// Get the contents of the file to send.
+		// Gets the contents of the file to send.
 		std::ifstream file(localFile.c_str(), std::ios_base::binary);
 
 		if (!file)
@@ -229,7 +229,7 @@ namespace acid
 				// Send the file data.
 				data.Send(file);
 
-				// Get the response from the server.
+				// Gets the response from the server.
 				response = GetResponse();
 			}
 		}

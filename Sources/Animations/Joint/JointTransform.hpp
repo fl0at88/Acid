@@ -1,11 +1,28 @@
 #pragma once
 
+#include <string>
 #include "Maths/Quaternion.hpp"
 #include "Maths/Vector3.hpp"
-#include "JointTransformData.hpp"
 
 namespace acid
 {
+	class JointTransformData
+	{
+	private:
+		std::string m_jointNameId;
+		Matrix4 m_jointLocalTransform;
+	public:
+		JointTransformData(const std::string &jointNameId, const Matrix4 &jointLocalTransform) :
+			m_jointNameId(jointNameId),
+			m_jointLocalTransform(jointLocalTransform)
+		{
+		}
+
+		std::string GetJointNameId() const { return m_jointNameId; }
+
+		Matrix4 GetJointLocalTransform() const { return m_jointLocalTransform; }
+	};
+
 	/// <summary>
 	/// Represents the local bone-space transform of a joint at a certain keyframe during an animation.
 	/// This includes the position and rotation of the joint, relative to the parent joint (or relative to the model's origin if it's the root joint).

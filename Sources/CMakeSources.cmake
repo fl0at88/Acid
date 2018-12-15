@@ -8,15 +8,12 @@ set(_temp_acid_headers
 		Animations/Geometry/VertexAnimated.hpp
 		Animations/Geometry/VertexAnimatedData.hpp
 		Animations/Joint/Joint.hpp
-		Animations/Joint/JointData.hpp
 		Animations/Joint/JointTransform.hpp
-		Animations/Joint/JointTransformData.hpp
 		Animations/Keyframe/Keyframe.hpp
-		Animations/Keyframe/KeyframeData.hpp
 		Animations/MeshAnimated.hpp
 		Animations/Skeleton/SkeletonLoader.hpp
 		Animations/Skin/SkinLoader.hpp
-		Animations/Skin/VertexSkinData.hpp
+		Animations/Skin/VertexWeights.hpp
 		Audio/Audio.hpp
 		Audio/Sound.hpp
 		Audio/SoundBuffer.hpp
@@ -24,10 +21,9 @@ set(_temp_acid_headers
 		Display/Display.hpp
 		Engine/Engine.hpp
 		Engine/Exports.hpp
-		Engine/IModule.hpp
 		Engine/Log.hpp
-		Engine/ModuleRegister.hpp
-		Engine/ModuleUpdater.hpp
+		Engine/Module.hpp
+		Engine/ModuleManager.hpp
 		Events/EventChange.hpp
 		Events/Events.hpp
 		Events/EventStandard.hpp
@@ -41,11 +37,8 @@ set(_temp_acid_headers
 		Files/Json/JsonSection.hpp
 		Files/Xml/FileXml.hpp
 		Files/Xml/XmlNode.hpp
-		Fonts/FontCharacter.hpp
-		Fonts/FontLine.hpp
 		Fonts/FontMetafile.hpp
 		Fonts/FontType.hpp
-		Fonts/FontWord.hpp
 		Fonts/RendererFonts.hpp
 		Fonts/Text.hpp
 		Gizmos/Gizmo.hpp
@@ -109,6 +102,7 @@ set(_temp_acid_headers
 		Models/Shapes/ModelDisk.hpp
 		Models/Shapes/ModelRectangle.hpp
 		Models/Shapes/ModelSphere.hpp
+		Models/ModelRegister.hpp
 		Models/VertexModel.hpp
 		Models/VertexModelData.hpp
 		Network/Ftp/Ftp.hpp
@@ -186,7 +180,6 @@ set(_temp_acid_headers
 		Renderer/Handlers/PushHandler.hpp
 		Renderer/Handlers/StorageHandler.hpp
 		Renderer/Handlers/UniformHandler.hpp
-		Renderer/IManagerRender.hpp
 		Renderer/IRenderer.hpp
 		Renderer/Pipelines/Compute.hpp
 		Renderer/Pipelines/IPipeline.hpp
@@ -195,6 +188,7 @@ set(_temp_acid_headers
 		Renderer/Pipelines/ShaderProgram.hpp
 		Renderer/Renderer.hpp
 		Renderer/RendererRegister.hpp
+		Renderer/RenderManager.hpp
 		Renderer/Renderpass/Renderpass.hpp
 		Renderer/Renderpass/RenderpassCreate.hpp
 		Renderer/RenderStage.hpp
@@ -244,23 +238,19 @@ set(_temp_acid_sources
 		Animations/Geometry/VertexAnimated.cpp
 		Animations/Geometry/VertexAnimatedData.cpp
 		Animations/Joint/Joint.cpp
-		Animations/Joint/JointData.cpp
 		Animations/Joint/JointTransform.cpp
-		Animations/Joint/JointTransformData.cpp
 		Animations/Keyframe/Keyframe.cpp
-		Animations/Keyframe/KeyframeData.cpp
 		Animations/MeshAnimated.cpp
 		Animations/Skeleton/SkeletonLoader.cpp
 		Animations/Skin/SkinLoader.cpp
-		Animations/Skin/VertexSkinData.cpp
+		Animations/Skin/VertexWeights.cpp
 		Audio/Audio.cpp
 		Audio/Sound.cpp
 		Audio/SoundBuffer.cpp
 		Display/Display.cpp
 		Engine/Engine.cpp
 		Engine/Log.cpp
-		Engine/ModuleRegister.cpp
-		Engine/ModuleUpdater.cpp
+		Engine/ModuleManager.cpp
 		Events/Events.cpp
 		Events/EventStandard.cpp
 		Events/EventTime.cpp
@@ -271,11 +261,8 @@ set(_temp_acid_sources
 		Files/Json/JsonSection.cpp
 		Files/Xml/FileXml.cpp
 		Files/Xml/XmlNode.cpp
-		Fonts/FontCharacter.cpp
-		Fonts/FontLine.cpp
 		Fonts/FontMetafile.cpp
 		Fonts/FontType.cpp
-		Fonts/FontWord.cpp
 		Fonts/RendererFonts.cpp
 		Fonts/Text.cpp
 		Gizmos/Gizmo.cpp
@@ -332,6 +319,7 @@ set(_temp_acid_sources
 		Models/Shapes/ModelDisk.cpp
 		Models/Shapes/ModelRectangle.cpp
 		Models/Shapes/ModelSphere.cpp
+		Models/ModelRegister.cpp
 		Models/VertexModel.cpp
 		Models/VertexModelData.cpp
 		Network/Ftp/Ftp.cpp

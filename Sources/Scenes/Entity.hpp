@@ -2,6 +2,7 @@
 
 #include <memory>
 #include <vector>
+#include <algorithm>
 #include "Engine/Exports.hpp"
 #include "Maths/Transform.hpp"
 #include "Component.hpp"
@@ -140,38 +141,25 @@ namespace acid
 		/// Removes a component from this entity.
 		/// </summary>
 		/// <param name="component"> The component to remove. </param>
-		/// <returns> If the component was removed. </returns>
-		bool RemoveComponent(Component *component);
+		void RemoveComponent(Component *component);
 
 		/// <summary>
 		/// Removes a component from this entity.
 		/// </summary>
 		/// <param name="name"> The name of the component to remove. </param>
-		/// <returns> If the component was removed. </returns>
-		bool RemoveComponent(const std::string &name);
+		void RemoveComponent(const std::string &name);
 
 		/// <summary>
 		/// Removes a component by type from this entity.
 		/// </summary>
 		/// <param name="T"> The type of component to remove. </param>
-		/// <returns> If the component was removed. </returns>
 		template<typename T>
-		bool RemoveComponent()
+		void RemoveComponent()
 		{
-			for (auto it = m_components.begin(); it != m_components.end(); ++it)
-			{
-				auto casted = dynamic_cast<T *>((*it).get());
-
-				if (casted != nullptr)
-				{
-					(*it)->SetParent(nullptr);
-
-					m_components.erase(it);
-					return true;
-				}
-			}
-
-			return false;
+			m_components.erase(std::remove_if(m_components.begin(), m_components.end(), [](const std::unique_ptr<Component> &c){
+				auto casted = dynamic_cast<T *>(c.get());
+				return casted != nullptr;
+			}), m_components.end());
 		}
 
 		std::string GetName() const { return m_name; }

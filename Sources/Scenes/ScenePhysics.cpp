@@ -106,7 +106,7 @@ namespace acid
 		// Iterate through all of the manifolds in the dispatcher.
 		for (int i = 0; i < m_dispatcher->getNumManifolds(); ++i)
 		{
-			// Get the manifold.
+			// Gets the manifold.
 			auto manifold = m_dispatcher->getManifoldByIndexInternal(i);
 
 			// Ignore manifolds that have no contact points..
@@ -115,7 +115,7 @@ namespace acid
 				continue;
 			}
 
-			// Get the two rigid bodies involved in the collision.
+			// Gets the two rigid bodies involved in the collision.
 			auto body0 = manifold->getBody0();
 			auto body1 = manifold->getBody1();
 

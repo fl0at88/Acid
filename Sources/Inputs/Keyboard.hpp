@@ -139,7 +139,7 @@ namespace acid
 	/// A module used for the creation, updating and destruction of the keyboard keys.
 	/// </summary>
 	class ACID_EXPORT Keyboard :
-		public IModule
+		public Module<Keyboard>
 	{
 	private:
 		std::array<bool, KEY_END_RANGE> m_keyboardKeys;
@@ -148,14 +148,7 @@ namespace acid
 		friend void CallbackKey(GLFWwindow *window, int32_t key, int32_t scancode, int32_t action, int32_t mods);
 
 		friend void CallbackChar(GLFWwindow *window, uint32_t codepoint);
-
 	public:
-		/// <summary>
-		/// Gets this engine instance.
-		/// </summary>
-		/// <returns> The current module instance. </returns>
-		static Keyboard *Get() { return Engine::Get()->GetModule<Keyboard>(); }
-
 		Keyboard();
 
 		void Update() override;

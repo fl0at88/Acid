@@ -11,19 +11,13 @@ namespace acid
 	/// A manager that manages particles.
 	/// </summary>
 	class ACID_EXPORT Particles :
-		public IModule
+		public Module<Particles>
 	{
 	private:
 		static const float MAX_ELAPSED_TIME;
 
 		std::map<std::shared_ptr<ParticleType>, std::vector<Particle>> m_particles;
 	public:
-		/// <summary>
-		/// Gets this engine instance.
-		/// </summary>
-		/// <returns> The current module instance. </returns>
-		static Particles *Get() { return Engine::Get()->GetModule<Particles>(); }
-
 		Particles();
 
 		void Update() override;

@@ -28,7 +28,7 @@ namespace acid
 				continue;
 			}
 
-			auto component = Scenes::Get()->CreateComponent(value->GetName());
+			auto component = Scenes::Get()->GetComponentRegister().Create(value->GetName());
 
 			if (component == nullptr)
 			{
@@ -92,40 +92,19 @@ namespace acid
 		return component;
 	}
 
-	bool Entity::RemoveComponent(Component *component)
+	void Entity::RemoveComponent(Component *component)
 	{
-		for (auto it = m_components.begin(); it != m_components.end(); ++it)
-		{
-			if ((*it).get() == component)
-			{
-				(*it)->SetParent(nullptr);
-
-				m_components.erase(it);
-				return true;
-			}
-		}
-
-		return false;
+		m_components.erase(std::remove_if(m_components.begin(), m_components.end(), [component](const std::unique_ptr<Component> &c){
+			return component == c.get();
+		}), m_components.end());
 	}
 
-	bool Entity::RemoveComponent(const std::string &name)
+	void Entity::RemoveComponent(const std::string &name)
 	{
-		for (auto it = m_components.begin(); it != m_components.end(); ++it)
-		{
-			auto componentName = Scenes::Get()->FindComponentName((*it).get());
-
-			if (componentName && name == *componentName)
-			{
-				continue;
-			}
-
-			(*it)->SetParent(nullptr);
-
-			m_components.erase(it);
-			return true;
-		}
-
-		return false;
+		m_components.erase(std::remove_if(m_components.begin(), m_components.end(), [name](const std::unique_ptr<Component> &c){
+			auto componentName = Scenes::Get()->GetComponentRegister().FindName(c.get());
+			return componentName ? name == componentName : false;
+		}), m_components.end());
 	}
 
 	Transform Entity::GetWorldTransform() const

@@ -11,15 +11,9 @@ namespace acid
 	/// A module used for managing files on engine updates.
 	/// </summary>
 	class ACID_EXPORT Files :
-		public IModule
+		public Module<Files>
 	{
 	public:
-		/// <summary>
-		/// Gets this engine instance.
-		/// </summary>
-		/// <returns> The current module instance. </returns>
-		static Files *Get() { return Engine::Get()->GetModule<Files>(); }
-
 		Files();
 
 		void Update() override;

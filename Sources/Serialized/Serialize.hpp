@@ -13,7 +13,7 @@ namespace acid
 		ENCODE_PROP_CHILDREN = 0x00000004,
 		ENCODE_PROP_ATTRIBUTES = 0x00000008
 	};
-	typedef uint32_t EncodePropsFlags;
+	using EncodePropsFlags = uint32_t;
 
 	class ACID_EXPORT Serialize
 	{

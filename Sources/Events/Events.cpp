@@ -1,5 +1,7 @@
 #include "Events.hpp"
 
+#include <algorithm>
+
 namespace acid
 {
 	Events::Events() :
@@ -35,17 +37,10 @@ namespace acid
 		return event;
 	}
 
-	bool Events::RemoveEvent(IEvent *event)
+	void Events::RemoveEvent(IEvent *event)
 	{
-		for (auto it = m_events.begin(); it != m_events.end(); ++it)
-		{
-			if ((*it).get() == event)
-			{
-				m_events.erase(it);
-				return true;
-			}
-		}
-
-		return false;
+		m_events.erase(std::remove_if(m_events.begin(), m_events.end(), [event](const std::unique_ptr<IEvent> &e){
+			return event == e.get();
+		}), m_events.end());
 	}
 }

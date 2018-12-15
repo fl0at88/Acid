@@ -82,7 +82,7 @@ namespace acid
 			return localAddress;
 		}
 
-		// Get the local address of the socket connection.
+		// Gets the local address of the socket connection.
 		SocketAddrLength size = sizeof(address);
 
 		if (getsockname(sock, reinterpret_cast<sockaddr *>(&address), &size) == -1)

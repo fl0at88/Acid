@@ -7,7 +7,7 @@ namespace acid
 	{
 	}
 
-	IRenderer *RendererRegister::AddRenderer(IRenderer *renderer)
+	IRenderer *RendererRegister::Add(IRenderer *renderer)
 	{
 		if (renderer == nullptr)
 		{
@@ -34,26 +34,13 @@ namespace acid
 		return renderer;
 	}
 
-	bool RendererRegister::RemoveRenderer(IRenderer *renderer)
+	void RendererRegister::Remove(IRenderer *renderer)
 	{
-		for (auto it = m_stages.begin(); it != m_stages.end(); ++it)
+		for (auto &[key, renderers] : m_stages)
 		{
-			for (auto it2 = (*it).second.begin(); it2 != (*it).second.end(); ++it)
-			{
-				if ((*it2).get() == renderer)
-				{
-					(*it).second.erase(it2);
-
-					if ((*it).second.empty())
-					{
-						m_stages.erase(it);
-					}
-
-					return true;
-				}
-			}
+			renderers.erase(std::remove_if(renderers.begin(), renderers.end(), [renderer](const std::unique_ptr<IRenderer> &r){
+				return renderer == r.get();
+			}), renderers.end());
 		}
-
-		return false;
 	}
 }

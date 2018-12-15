@@ -9,19 +9,13 @@ namespace acid
 	/// A module used for that manages gui textures in a container.
 	/// </summary>
 	class ACID_EXPORT Uis :
-		public IModule
+		public Module<Uis>
 	{
 	private:
 		UiSelector m_selector;
 		std::unique_ptr<UiObject> m_container;
 		std::vector<UiObject *> m_objects;
 	public:
-		/// <summary>
-		/// Gets this engine instance.
-		/// </summary>
-		/// <returns> The current module instance. </returns>
-		static Uis *Get() { return Engine::Get()->GetModule<Uis>(); }
-
 		Uis();
 
 		void Update() override;

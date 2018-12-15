@@ -10,17 +10,11 @@ namespace acid
 	/// A module used for managing events on engine updates.
 	/// </summary>
 	class ACID_EXPORT Events :
-		public IModule
+		public Module<Events>
 	{
 	private:
 		std::vector<std::unique_ptr<IEvent>> m_events;
 	public:
-		/// <summary>
-		/// Gets this engine instance.
-		/// </summary>
-		/// <returns> The current module instance. </returns>
-		static Events *Get() { return Engine::Get()->GetModule<Events>(); }
-
 		Events();
 
 		Events(const Events&) = delete; 
@@ -48,7 +42,6 @@ namespace acid
 		/// Removes a event to the listening list.
 		/// </summary>
 		/// <param name="event"> The event to remove. </param>
-		/// <returns> If the event was removed. </returns>
-		bool RemoveEvent(IEvent *event);
+		void RemoveEvent(IEvent *event);
 	};
 }

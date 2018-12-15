@@ -45,12 +45,12 @@ namespace acid
 			return;
 		}
 
-		if (!m_managerRender->IsStarted())
+		if (!m_managerRender->m_started)
 		{
 			m_rendererRegister.Clear();
-			CreateRenderpass(m_managerRender->GetRenderpassCreates());
+			CreateRenderpass(m_managerRender->m_renderpassCreates);
 			m_managerRender->Start();
-			m_managerRender->SetStarted(true);
+			m_managerRender->m_started = true;
 		}
 
 		m_managerRender->Update();
@@ -171,7 +171,7 @@ namespace acid
 		VkDeviceMemory dstImageMemory;
 		bool supportsBlit = Texture::CopyImage(srcImage, dstImage, dstImageMemory, width, height, true, 0, 1);
 
-		// Get layout of the image (including row pitch).
+		// Gets the layout of the image (including row pitch).
 		VkImageSubresource subResource{};
 		subResource.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
 

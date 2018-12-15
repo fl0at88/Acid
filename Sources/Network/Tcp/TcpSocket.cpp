@@ -128,7 +128,7 @@ namespace acid
 				return SOCKET_STATUS_DONE;
 			}
 
-			// Get the error status.
+			// Gets the error status.
 			SocketStatus status = Socket::GetErrorStatus();
 
 			// If we were in non-blocking mode, return immediately.

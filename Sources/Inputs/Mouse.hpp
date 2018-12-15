@@ -29,7 +29,7 @@ namespace acid
 	/// A module used for the creation, updating and destruction of the mouse.
 	/// </summary>
 	class ACID_EXPORT Mouse :
-		public IModule
+		public Module<Mouse>
 	{
 	private:
 		std::array<bool, MOUSE_BUTTON_END_RANGE> m_mouseButtons;
@@ -54,14 +54,7 @@ namespace acid
 		friend void CallbackCursorPos(GLFWwindow *window, double xpos, double ypos);
 
 		friend void CallbackCursorEnter(GLFWwindow *window, int32_t entered);
-
 	public:
-		/// <summary>
-		/// Gets this engine instance.
-		/// </summary>
-		/// <returns> The current module instance. </returns>
-		static Mouse *Get() { return Engine::Get()->GetModule<Mouse>(); }
-
 		Mouse();
 
 		void Update() override;

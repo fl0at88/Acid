@@ -15,7 +15,7 @@ namespace acid
 	/// A module used for the creation, updating and destruction of the display.
 	/// </summary>
 	class ACID_EXPORT Display :
-		public IModule
+		public Module<Display>
 	{
 	private:
 		uint32_t m_windowWidth;
@@ -93,14 +93,7 @@ namespace acid
 		friend VkResult FvkCreateDebugReportCallbackEXT(VkInstance instance, const VkDebugReportCallbackCreateInfoEXT *pCreateInfo, const VkAllocationCallbacks *pAllocator, VkDebugReportCallbackEXT *pCallback);
 
 		friend void FvkDestroyDebugReportCallbackEXT(VkInstance instance, VkDebugReportCallbackEXT callback, const VkAllocationCallbacks *pAllocator);
-
 	public:
-		/// <summary>
-		/// Gets this engine instance.
-		/// </summary>
-		/// <returns> The current module instance. </returns>
-		static Display *Get() { return Engine::Get()->GetModule<Display>(); }
-
 		Display();
 
 		~Display();

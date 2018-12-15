@@ -1,11 +1,34 @@
 #pragma once
 
 #include <map>
+#include <vector>
+#include "Maths/Time.hpp"
 #include "Animations/Joint/JointTransform.hpp"
-#include "KeyframeData.hpp"
 
 namespace acid
 {
+	class KeyframeData
+	{
+	private:
+		Time m_time;
+		std::vector<JointTransformData> m_jointTransforms;
+	public:
+		explicit KeyframeData(const Time &time) :
+			m_time(time),
+			m_jointTransforms(std::vector<JointTransformData>())
+		{
+		}
+
+		Time GetTime() const { return m_time; }
+
+		std::vector<JointTransformData> GetJointTransforms() const { return m_jointTransforms; }
+
+		void AddJointTransform(const JointTransformData &transform)
+		{
+			m_jointTransforms.emplace_back(transform);
+		}
+	};
+
 	/// <summary>
 	/// Represents one keyframe of an animation. This contains the timestamp of the keyframe,
 	/// which is the time (in seconds) from the start of the animation when this keyframe occurs.

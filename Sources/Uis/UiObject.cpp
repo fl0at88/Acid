@@ -111,18 +111,11 @@ namespace acid
 		m_children.emplace_back(child);
 	}
 
-	bool UiObject::RemoveChild(UiObject *child)
+	void UiObject::RemoveChild(UiObject *child)
 	{
-		for (auto it = m_children.begin(); it != m_children.end(); ++it)
-		{
-			if ((*it).get() == child)
-			{
-				m_children.erase(it);
-				return true;
-			}
-		}
-
-		return false;
+		m_children.erase(std::remove_if(m_children.begin(), m_children.end(), [child](const std::unique_ptr<UiObject> &o){
+			return child == o.get();
+		}), m_children.end());
 	}
 
 	bool UiObject::IsVisible() const

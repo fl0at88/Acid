@@ -12,17 +12,11 @@ namespace acid
 	/// A module used for that manages debug gizmos.
 	/// </summary>
 	class ACID_EXPORT Gizmos :
-		public IModule
+		public Module<Gizmos>
 	{
 	private:
 		std::map<std::shared_ptr<GizmoType>, std::vector<std::unique_ptr<Gizmo>>> m_gizmos;
 	public:
-		/// <summary>
-		/// Gets this engine instance.
-		/// </summary>
-		/// <returns> The current module instance. </returns>
-		static Gizmos *Get() { return Engine::Get()->GetModule<Gizmos>(); }
-
 		Gizmos();
 
 		Gizmos(const Gizmos&) = delete;

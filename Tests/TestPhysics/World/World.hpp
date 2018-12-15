@@ -14,7 +14,7 @@ namespace test
 	/// A module used for managing the world.
 	/// </summary>
 	class World :
-		public IModule
+		public Module<World>
 	{
 	private:
 		DriverLinear m_driverDay;
@@ -25,12 +25,6 @@ namespace test
 		Vector3 m_skyboxRotation;
 		Vector3 m_lightDirection;
 	public:
-		/// <summary>
-		/// Gets this engine instance.
-		/// </summary>
-		/// <returns> The current module instance. </returns>
-		static World *Get() { return Engine::Get()->GetModule<World>(); }
-
 		World();
 
 		void Update() override;

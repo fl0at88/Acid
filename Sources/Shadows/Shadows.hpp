@@ -10,7 +10,7 @@ namespace acid
 	/// A module used for managing shadow maps in 3D worlds.
 	/// </summary>
 	class ACID_EXPORT Shadows :
-		public IModule
+		public Module<Shadows>
 	{
 	private:
 		Vector3 m_lightDirection;
@@ -26,12 +26,6 @@ namespace acid
 
 		ShadowBox m_shadowBox;
 	public:
-		/// <summary>
-		/// Gets this engine instance.
-		/// </summary>
-		/// <returns> The current module instance. </returns>
-		static Shadows *Get() { return Engine::Get()->GetModule<Shadows>(); }
-
 		Shadows();
 
 		void Update() override;

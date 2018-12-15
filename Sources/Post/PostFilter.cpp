@@ -55,17 +55,11 @@ namespace acid
 		it->second = descriptor;
 	}
 
-	bool PostFilter::RemoveAttachment(const std::string &name)
+	void PostFilter::RemoveAttachment(const std::string &name)
 	{
-		auto it = m_attachments.find(name);
-
-		if (it != m_attachments.end())
-		{
-			m_attachments.erase(it);
-			return true;
-		}
-
-		return false;
+	//	m_attachments.erase(std::remove_if(m_attachments.begin(), m_attachments.end(), [name](const std::string &n, IDescriptor *d){
+	//		return name == n; // FIXME: Remove
+	//	}), m_attachments.end());
 	}
 
 	void PostFilter::PushConditional(const std::string &descriptorName1, const std::string &descriptorName2, const std::string &rendererAttachment1, const std::string &rendererAttachment2)
