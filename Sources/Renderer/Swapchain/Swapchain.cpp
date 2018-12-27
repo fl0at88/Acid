@@ -80,7 +80,7 @@ namespace acid
 
 		if (graphicsFamily != presentFamily)
 		{
-			std::array<uint32_t, 2> queueFamily = {graphicsFamily, presentFamily};
+			std::array<uint32_t, 2> queueFamily = { graphicsFamily, presentFamily };
 			swapchainCreateInfo.imageSharingMode = VK_SHARING_MODE_CONCURRENT;
 			swapchainCreateInfo.queueFamilyIndexCount = static_cast<uint32_t>(queueFamily.size());
 			swapchainCreateInfo.pQueueFamilyIndices = queueFamily.data();

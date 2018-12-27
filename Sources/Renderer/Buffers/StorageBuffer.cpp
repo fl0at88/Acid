@@ -6,12 +6,8 @@ namespace acid
 {
 	StorageBuffer::StorageBuffer(const VkDeviceSize &size) :
 		IDescriptor(),
-		Buffer(size, VK_BUFFER_USAGE_STORAGE_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_CACHED_BIT), // TODO: Use DEVICE_LOCAL instead.
-		m_bufferInfo({})
+		Buffer(size, VK_BUFFER_USAGE_STORAGE_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_CACHED_BIT) // TODO: Use DEVICE_LOCAL instead.
 	{
-		m_bufferInfo.buffer = m_buffer;
-		m_bufferInfo.offset = 0;
-		m_bufferInfo.range = m_size;
 	}
 
 	void StorageBuffer::Update(const void *newData)
@@ -25,33 +21,39 @@ namespace acid
 		vkUnmapMemory(logicalDevice, m_bufferMemory);
 	}
 
-	DescriptorType StorageBuffer::CreateDescriptor(const uint32_t &binding, const VkDescriptorType &descriptorType, const VkShaderStageFlags &stage, const uint32_t &count)
+	VkDescriptorSetLayoutBinding StorageBuffer::GetDescriptorSetLayout(const uint32_t &binding, const VkDescriptorType &descriptorType, const VkShaderStageFlags &stage, const uint32_t &count)
 	{
 		VkDescriptorSetLayoutBinding descriptorSetLayoutBinding = {};
 		descriptorSetLayoutBinding.binding = binding;
 		descriptorSetLayoutBinding.descriptorType = descriptorType;
 		descriptorSetLayoutBinding.descriptorCount = 1;
-		descriptorSetLayoutBinding.pImmutableSamplers = nullptr;
 		descriptorSetLayoutBinding.stageFlags = stage;
-
-		VkDescriptorPoolSize descriptorPoolSize = {};
-		descriptorPoolSize.type = descriptorType;
-		descriptorPoolSize.descriptorCount = count;
-
-		return DescriptorType(binding, stage, descriptorSetLayoutBinding, descriptorPoolSize);
+		descriptorSetLayoutBinding.pImmutableSamplers = nullptr;
+		return descriptorSetLayoutBinding;
 	}
 
-	VkWriteDescriptorSet StorageBuffer::GetWriteDescriptor(const uint32_t &binding, const VkDescriptorType &descriptorType, const DescriptorSet &descriptorSet) const
+	WriteDescriptorSet StorageBuffer::GetWriteDescriptor(const uint32_t &binding, const VkDescriptorType &descriptorType,
+		const DescriptorSet &descriptorSet, const std::optional<OffsetSize> &offsetSize) const
 	{
-		VkWriteDescriptorSet descriptorWrite = {};
+		VkDescriptorBufferInfo bufferInfo = {};
+		bufferInfo.buffer = m_buffer;
+		bufferInfo.offset = 0;
+		bufferInfo.range = m_size;
+
+		if (offsetSize)
+		{
+			bufferInfo.offset = offsetSize->GetOffset();
+			bufferInfo.range = offsetSize->GetSize();
+		}
+
+		WriteDescriptorSet descriptorWrite = {};
 		descriptorWrite.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
 		descriptorWrite.dstSet = descriptorSet.GetDescriptorSet();
 		descriptorWrite.dstBinding = binding;
 		descriptorWrite.dstArrayElement = 0;
-		descriptorWrite.descriptorType = descriptorType;
 		descriptorWrite.descriptorCount = 1;
-		descriptorWrite.pBufferInfo = &m_bufferInfo;
-
+		descriptorWrite.descriptorType = descriptorType;
+		descriptorWrite.bufferInfo = bufferInfo;
 		return descriptorWrite;
 	}
 }

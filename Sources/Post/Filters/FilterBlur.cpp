@@ -5,7 +5,7 @@
 namespace acid
 {
 	FilterBlur::FilterBlur(const GraphicsStage &graphicsStage, const Vector2 &direction, const BlurType &blurType) :
-		PostFilter(graphicsStage, {"Shaders/Filters/Default.vert", "Shaders/Filters/Blur.frag"}, {PipelineDefine("BLUR_TYPE", String::To(blurType))}),
+		PostFilter(graphicsStage, {"Shaders/Filters/Default.vert", "Shaders/Filters/Blur.frag"}, {ShaderDefine("BLUR_TYPE", String::To(blurType))}),
 		m_pushScene(PushHandler()),
 		m_blurType(blurType),
 		m_direction(direction)
@@ -18,7 +18,7 @@ namespace acid
 		m_pushScene.Push("direction", m_direction);
 
 		// Updates descriptors.
-		m_descriptorSet.Push("PushScene", &m_pushScene);
+		m_descriptorSet.Push("PushScene", m_pushScene);
 	//	m_descriptorSet.Push("writeColour", GetAttachment("writeColour", "resolved"));
 	//	m_descriptorSet.Push("samplerColour", GetAttachment("samplerColour", "resolved"));
 		PushConditional("writeColour", "samplerColour", "resolved", "diffuse");

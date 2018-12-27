@@ -61,6 +61,7 @@ set(_temp_acid_headers
 		Inputs/ButtonMouse.hpp
 		Inputs/IAxis.hpp
 		Inputs/IButton.hpp
+		Inputs/InputDelay.hpp
 		Inputs/Joysticks.hpp
 		Inputs/Keyboard.hpp
 		Inputs/Mouse.hpp
@@ -186,7 +187,6 @@ set(_temp_acid_headers
 		Renderer/Pipelines/Compute.hpp
 		Renderer/Pipelines/IPipeline.hpp
 		Renderer/Pipelines/Pipeline.hpp
-		Renderer/Pipelines/PipelineCreate.hpp
 		Renderer/Pipelines/ShaderProgram.hpp
 		Renderer/Renderer.hpp
 		Renderer/RendererRegister.hpp
@@ -221,7 +221,6 @@ set(_temp_acid_headers
 		Threads/Thread.hpp
 		Threads/ThreadPool.hpp
 		Uis/Inputs/UiInputButton.hpp
-		Uis/Inputs/UiInputDelay.hpp
 		Uis/Inputs/UiInputGrabber.hpp
 		Uis/Inputs/UiInputSlider.hpp
 		Uis/Inputs/UiInputText.hpp
@@ -282,6 +281,7 @@ set(_temp_acid_sources
 		Inputs/ButtonJoystick.cpp
 		Inputs/ButtonKeyboard.cpp
 		Inputs/ButtonMouse.cpp
+		Inputs/InputDelay.cpp
 		Inputs/Joysticks.cpp
 		Inputs/Keyboard.cpp
 		Inputs/Mouse.cpp
@@ -425,7 +425,6 @@ set(_temp_acid_sources
 		Threads/Thread.cpp
 		Threads/ThreadPool.cpp
 		Uis/Inputs/UiInputButton.cpp
-		Uis/Inputs/UiInputDelay.cpp
 		Uis/Inputs/UiInputGrabber.cpp
 		Uis/Inputs/UiInputSlider.cpp
 		Uis/Inputs/UiInputText.cpp

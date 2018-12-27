@@ -11,15 +11,14 @@ namespace acid
 		public IDescriptor,
 		public Buffer
 	{
-	private:
-		VkDescriptorBufferInfo m_bufferInfo;
 	public:
 		explicit StorageBuffer(const VkDeviceSize &size);
 
 		void Update(const void *newData);
 
-		static DescriptorType CreateDescriptor(const uint32_t &binding, const VkDescriptorType &descriptorType, const VkShaderStageFlags &stage, const uint32_t &count);
+		static VkDescriptorSetLayoutBinding GetDescriptorSetLayout(const uint32_t &binding, const VkDescriptorType &descriptorType, const VkShaderStageFlags &stage, const uint32_t &count);
 
-		VkWriteDescriptorSet GetWriteDescriptor(const uint32_t &binding, const VkDescriptorType &descriptorType, const DescriptorSet &descriptorSet) const override;
+		WriteDescriptorSet GetWriteDescriptor(const uint32_t &binding, const VkDescriptorType &descriptorType,
+			const DescriptorSet &descriptorSet, const std::optional<OffsetSize> &offsetSize) const override;
 	};
 }

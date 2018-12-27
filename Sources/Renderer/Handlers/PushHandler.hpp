@@ -2,7 +2,8 @@
 
 #include <algorithm>
 #include <memory>
-#include "Renderer/Pipelines/Pipeline.hpp"
+#include "Renderer/Descriptors/IDescriptor.hpp"
+#include "Renderer/Pipelines/IPipeline.hpp"
 
 namespace acid
 {
@@ -14,18 +15,16 @@ namespace acid
 	private:
 		bool m_multipipeline;
 		UniformBlock *m_uniformBlock;
-		void *m_data; // TODO: Convert to unique_ptr
+		std::unique_ptr<char[]> m_data;
 	public:
 		explicit PushHandler(const bool &multipipeline = false);
 
 		explicit PushHandler(UniformBlock *uniformBlock, const bool &multipipeline = false);
 
-		~PushHandler();
-
 		template<typename T>
 		void Push(const T &object, const size_t &offset, const size_t &size)
 		{
-			memcpy((char *) m_data + offset, &object, size);
+			memcpy(m_data.get() + offset, &object, size);
 		}
 
 		template<typename T>
@@ -40,12 +39,6 @@ namespace acid
 
 			if (uniform == nullptr)
 			{
-#if defined(ACID_VERBOSE)
-			//	if (m_shaderProgram->ReportedNotFound(uniformName, true)) // TODO
-			//	{
-			//		Log::Error("Could not find uniform attribute in uniform '%s' of name '%s'\n", m_uniformBlock->GetName().c_str(), uniformName.c_str());
-			//	}
-#endif
 				return;
 			}
 
@@ -61,6 +54,6 @@ namespace acid
 
 		bool Update(UniformBlock *uniformBlock);
 
-		void BindPush(const CommandBuffer &commandBuffer, const Pipeline &pipeline);
+		void BindPush(const CommandBuffer &commandBuffer, const IPipeline &pipeline);
 	};
 }

@@ -12,12 +12,12 @@ namespace acid
 	{
 		auto logicalDevice = Display::Get()->GetLogicalDevice();
 
-		uint32_t textureWidth = renderpassCreate.GetWidth() == 0 ? Display::Get()->GetWidth() : renderpassCreate.GetWidth();
-		uint32_t textureHeight = renderpassCreate.GetHeight() == 0 ? Display::Get()->GetHeight() : renderpassCreate.GetHeight();
+		auto textureWidth = renderpassCreate.GetWidth() == 0 ? Display::Get()->GetWidth() : renderpassCreate.GetWidth();
+		auto textureHeight = renderpassCreate.GetHeight() == 0 ? Display::Get()->GetHeight() : renderpassCreate.GetHeight();
 
 		for (auto &image : renderpassCreate.GetImages())
 		{
-			VkSampleCountFlagBits imageSamples = image.IsMultisampled() ? samples : VK_SAMPLE_COUNT_1_BIT;
+			auto imageSamples = image.IsMultisampled() ? samples : VK_SAMPLE_COUNT_1_BIT;
 
 			switch (image.GetType())
 			{
@@ -63,7 +63,6 @@ namespace acid
 			framebufferCreateInfo.width = width;
 			framebufferCreateInfo.height = height;
 			framebufferCreateInfo.layers = 1;
-
 			Display::CheckVk(vkCreateFramebuffer(logicalDevice, &framebufferCreateInfo, nullptr, &m_framebuffers.at(i)));
 		}
 	}

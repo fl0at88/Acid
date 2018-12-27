@@ -1,16 +1,19 @@
 #pragma once
 
-#include <array>
+#include <algorithm>
 #include <sstream>
 #include <string>
+#include <map>
 #include <memory>
+#include <optional>
 #include <vector>
 #include <vulkan/vulkan.h>
-#include "PipelineCreate.hpp"
+#include "Engine/Exports.hpp"
 
 namespace glslang 
 {
 	class TProgram;
+	class TType;
 }
 
 namespace acid
@@ -198,7 +201,8 @@ namespace acid
 		std::vector<std::unique_ptr<UniformBlock>> m_uniformBlocks;
 		std::vector<std::unique_ptr<VertexAttribute>> m_vertexAttributes;
 
-		std::vector<DescriptorType> m_descriptors;
+		std::vector<VkDescriptorSetLayoutBinding> m_descriptorSetLayouts;
+		std::vector<VkDescriptorPoolSize> m_descriptorPools;
 		std::vector<VkDescriptorType> m_descriptorTypes;
 		std::vector<VkVertexInputAttributeDescription> m_attributeDescriptions;
 
@@ -220,6 +224,8 @@ namespace acid
 
 		int32_t GetDescriptorLocation(const std::string &descriptor);
 
+		std::optional<uint32_t> GetDescriptorSize(const std::string &descriptor);
+
 		Uniform *GetUniform(const std::string &uniformName);
 
 		UniformBlock *GetUniformBlock(const std::string &blockName);
@@ -232,7 +238,9 @@ namespace acid
 
 		const std::vector<std::unique_ptr<VertexAttribute>> &GetVertexAttributes() const { return m_vertexAttributes; };
 
-		std::vector<DescriptorType> GetDescriptors() const { return m_descriptors; }
+		std::vector<VkDescriptorSetLayoutBinding> GetDescriptorSetLayouts() const { return m_descriptorSetLayouts; }
+
+		std::vector<VkDescriptorPoolSize> GetDescriptorPools() const { return m_descriptorPools; }
 
 		VkDescriptorType GetDescriptorType(const uint32_t &location) const { return m_descriptorTypes[location]; }
 
@@ -249,8 +257,9 @@ namespace acid
 		VkShaderModule ProcessShader(const std::string &shaderCode, const VkShaderStageFlags &stageFlag);
 
 		std::string ToString() const;
-
 	private:
+		void IncrementDescriptorPool(std::map<VkDescriptorType, uint32_t> &descriptorPoolCounts, const VkDescriptorType &type);
+
 		void LoadProgram(const glslang::TProgram &program, const VkShaderStageFlags &stageFlag);
 
 		void LoadUniformBlock(const glslang::TProgram &program, const VkShaderStageFlags &stageFlag, const int32_t &i);
@@ -258,5 +267,7 @@ namespace acid
 		void LoadUniform(const glslang::TProgram &program, const VkShaderStageFlags &stageFlag, const int32_t &i);
 
 		void LoadVertexAttribute(const glslang::TProgram &program, const VkShaderStageFlags &stageFlag, const int32_t &i);
+
+		int32_t ComputeSize(const glslang::TType *ttype);
 	};
 }

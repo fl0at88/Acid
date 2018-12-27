@@ -31,7 +31,7 @@ namespace acid
 	}
 
 	Cubemap::Cubemap(const std::string &filename, const std::string &fileSuffix, const VkFilter &filter, const VkSamplerAddressMode &addressMode,
-					 const bool &anisotropic, const bool &mipmap) :
+		const bool &anisotropic, const bool &mipmap) :
 		IResource(),
 		IDescriptor(),
 		m_filename(filename),
@@ -48,8 +48,7 @@ namespace acid
 		m_image(VK_NULL_HANDLE),
 		m_deviceMemory(VK_NULL_HANDLE),
 		m_imageView(VK_NULL_HANDLE),
-		m_format(VK_FORMAT_R8G8B8A8_UNORM),
-		m_imageInfo({})
+		m_format(VK_FORMAT_R8G8B8A8_UNORM)
 	{
 #if defined(ACID_VERBOSE)
 		auto debugStart = Engine::GetTime();
@@ -86,10 +85,6 @@ namespace acid
 		Texture::CreateImageSampler(m_sampler, m_filter, m_addressMode, m_anisotropic, m_mipLevels);
 		Texture::CreateImageView(m_image, m_imageView,VK_IMAGE_VIEW_TYPE_CUBE, m_format, VK_IMAGE_ASPECT_COLOR_BIT, m_mipLevels, 0, 6);
 
-		m_imageInfo.imageLayout = m_imageLayout;
-		m_imageInfo.imageView = m_imageView;
-		m_imageInfo.sampler = m_sampler;
-
 		Texture::DeletePixels(pixels);
 
 #if defined(ACID_VERBOSE)
@@ -99,7 +94,7 @@ namespace acid
 	}
 
 	Cubemap::Cubemap(const uint32_t &width, const uint32_t &height, void *pixels, const VkFormat &format, const VkImageLayout &imageLayout, const VkImageUsageFlags &usage,
-					 const VkFilter &filter, const VkSamplerAddressMode &addressMode, const VkSampleCountFlagBits &samples, const bool &anisotropic, const bool &mipmap) :
+		const VkFilter &filter, const VkSamplerAddressMode &addressMode, const VkSampleCountFlagBits &samples, const bool &anisotropic, const bool &mipmap) :
 		IResource(),
 		IDescriptor(),
 		m_filename(""),
@@ -116,8 +111,7 @@ namespace acid
 		m_image(VK_NULL_HANDLE),
 		m_deviceMemory(VK_NULL_HANDLE),
 		m_imageView(VK_NULL_HANDLE),
-		m_format(VK_FORMAT_R8G8B8A8_UNORM),
-		m_imageInfo({})
+		m_format(VK_FORMAT_R8G8B8A8_UNORM)
 	{
 		auto logicalDevice = Display::Get()->GetLogicalDevice();
 
@@ -134,7 +128,7 @@ namespace acid
 		if (pixels != nullptr)
 		{
 			Buffer bufferStaging = Buffer(width * height * 4 * 6, VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
-			                              VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
+				VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
 
 			void *data;
 			Display::CheckVk(vkMapMemory(logicalDevice, bufferStaging.GetBufferMemory(), 0, bufferStaging.GetSize(), 0, &data));
@@ -159,10 +153,6 @@ namespace acid
 
 		Texture::CreateImageSampler(m_sampler, m_filter, m_addressMode, m_anisotropic, m_mipLevels);
 		Texture::CreateImageView(m_image, m_imageView, VK_IMAGE_VIEW_TYPE_CUBE, m_format, VK_IMAGE_ASPECT_COLOR_BIT, m_mipLevels, 0, 6);
-
-		m_imageInfo.imageLayout = m_imageLayout;
-		m_imageInfo.imageView = m_imageView;
-		m_imageInfo.sampler = m_sampler;
 	}
 
 	Cubemap::~Cubemap()
@@ -175,33 +165,33 @@ namespace acid
 		vkDestroyImage(logicalDevice, m_image, nullptr);
 	}
 
-	DescriptorType Cubemap::CreateDescriptor(const uint32_t &binding, const VkDescriptorType &descriptorType, const VkShaderStageFlags &stage, const uint32_t &count)
+	VkDescriptorSetLayoutBinding Cubemap::GetDescriptorSetLayout(const uint32_t &binding, const VkDescriptorType &descriptorType, const VkShaderStageFlags &stage, const uint32_t &count)
 	{
 		VkDescriptorSetLayoutBinding descriptorSetLayoutBinding = {};
 		descriptorSetLayoutBinding.binding = binding;
-		descriptorSetLayoutBinding.descriptorCount = 1;
 		descriptorSetLayoutBinding.descriptorType = descriptorType;
-		descriptorSetLayoutBinding.pImmutableSamplers = nullptr;
+		descriptorSetLayoutBinding.descriptorCount = 1;
 		descriptorSetLayoutBinding.stageFlags = stage;
-
-		VkDescriptorPoolSize descriptorPoolSize = {};
-		descriptorPoolSize.type = descriptorType;
-		descriptorPoolSize.descriptorCount = count;
-
-		return DescriptorType(binding, stage, descriptorSetLayoutBinding, descriptorPoolSize);
+		descriptorSetLayoutBinding.pImmutableSamplers = nullptr;
+		return descriptorSetLayoutBinding;
 	}
 
-	VkWriteDescriptorSet Cubemap::GetWriteDescriptor(const uint32_t &binding, const VkDescriptorType &descriptorType, const DescriptorSet &descriptorSet) const
+	WriteDescriptorSet Cubemap::GetWriteDescriptor(const uint32_t &binding, const VkDescriptorType &descriptorType,
+		const DescriptorSet &descriptorSet, const std::optional<OffsetSize> &offsetSize) const
 	{
-		VkWriteDescriptorSet descriptorWrite = {};
+		VkDescriptorImageInfo imageInfo = {};
+		imageInfo.sampler = m_sampler;
+		imageInfo.imageView = m_imageView;
+		imageInfo.imageLayout = m_imageLayout;
+
+		WriteDescriptorSet descriptorWrite = {};
 		descriptorWrite.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
 		descriptorWrite.dstSet = descriptorSet.GetDescriptorSet();
 		descriptorWrite.dstBinding = binding;
 		descriptorWrite.dstArrayElement = 0;
-		descriptorWrite.descriptorType = descriptorType;
 		descriptorWrite.descriptorCount = 1;
-		descriptorWrite.pImageInfo = &m_imageInfo;
-
+		descriptorWrite.descriptorType = descriptorType;
+		descriptorWrite.imageInfo = imageInfo;
 		return descriptorWrite;
 	}
 
@@ -221,7 +211,7 @@ namespace acid
 		VkSubresourceLayout subresourceLayout;
 		vkGetImageSubresourceLayout(logicalDevice, dstImage, &imageSubresource, &subresourceLayout);
 
-		uint8_t *result = new uint8_t[subresourceLayout.size];
+		auto result = new uint8_t[subresourceLayout.size];
 
 		void *data;
 		vkMapMemory(logicalDevice, dstImageMemory, subresourceLayout.offset, subresourceLayout.size, 0, &data);
@@ -252,7 +242,7 @@ namespace acid
 		auto logicalDevice = Display::Get()->GetLogicalDevice();
 
 		Buffer bufferStaging = Buffer(m_width * m_height * 4 * 6, VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
-		                              VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
+			VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
 
 		void *data;
 		vkMapMemory(logicalDevice, bufferStaging.GetBufferMemory(), 0, bufferStaging.GetSize(), 0, &data);

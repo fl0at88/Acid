@@ -14,21 +14,23 @@ namespace acid
 	private:
 		bool m_multipipeline;
 		UniformBlock *m_uniformBlock;
+		uint32_t m_size;
+		std::unique_ptr<char[]> m_data;
 		std::unique_ptr<UniformBuffer> m_uniformBuffer;
-		void *m_data; // TODO: Convert to unique_ptr
-		bool m_changed;
+		HandlerStatus m_handlerStatus;
 	public:
 		explicit UniformHandler(const bool &multipipeline = false);
 
 		explicit UniformHandler(UniformBlock *uniformBlock, const bool &multipipeline = false);
 
-		~UniformHandler();
-
 		template<typename T>
 		void Push(const T &object, const size_t &offset, const size_t &size)
 		{
-			memcpy((char *) m_data + offset, &object, size);
-			m_changed = true;
+			if (memcmp(m_data.get() + offset, &object, size) != 0)
+			{
+				memcpy(m_data.get() + offset, &object, size);
+				m_handlerStatus = HANDLER_STATUS_CHANGED;
+			}
 		}
 
 		template<typename T>
@@ -43,12 +45,6 @@ namespace acid
 
 			if (uniform == nullptr)
 			{
-#if defined(ACID_VERBOSE)
-			//	if (m_shaderProgram->ReportedNotFound(uniformName, true)) // TODO
-			//	{
-			//		Log::Error("Could not find uniform attribute in uniform '%s' of name '%s'\n", m_uniformBlock->GetName().c_str(), uniformName.c_str());
-			//	}
-#endif
 				return;
 			}
 

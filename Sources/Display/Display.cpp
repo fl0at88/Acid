@@ -625,7 +625,6 @@ namespace acid
 		instanceCreateInfo.ppEnabledLayerNames = m_instanceLayerList.data();
 		instanceCreateInfo.enabledExtensionCount = static_cast<uint32_t>(m_instanceExtensionList.size());
 		instanceCreateInfo.ppEnabledExtensionNames = m_instanceExtensionList.data();
-
 		CheckVk(vkCreateInstance(&instanceCreateInfo, nullptr, &m_instance));
 	}
 
@@ -640,7 +639,6 @@ namespace acid
 				VK_DEBUG_REPORT_PERFORMANCE_WARNING_BIT_EXT;
 			debugReportCallbackCreateInfo.pfnCallback = &CallbackDebug;
 			debugReportCallbackCreateInfo.pUserData = nullptr;
-
 			CheckVk(FvkCreateDebugReportCallbackEXT(m_instance, &debugReportCallbackCreateInfo, nullptr, &m_debugReportCallback));
 		}
 	}
@@ -752,34 +750,14 @@ namespace acid
 
 		VkSampleCountFlags counts = std::min(physicalDeviceProperties.limits.framebufferColorSampleCounts, physicalDeviceProperties.limits.framebufferDepthSampleCounts);
 
-		if (counts & VK_SAMPLE_COUNT_64_BIT)
-		{
-			return VK_SAMPLE_COUNT_64_BIT;
-		}
+		std::vector<VkSampleCountFlagBits> sampleFlagBits = { VK_SAMPLE_COUNT_64_BIT, VK_SAMPLE_COUNT_32_BIT, VK_SAMPLE_COUNT_16_BIT, VK_SAMPLE_COUNT_8_BIT, VK_SAMPLE_COUNT_4_BIT, VK_SAMPLE_COUNT_2_BIT };
 
-		if (counts & VK_SAMPLE_COUNT_32_BIT)
+		for (auto &sampleFlag : sampleFlagBits)
 		{
-			return VK_SAMPLE_COUNT_32_BIT;
-		}
-
-		if (counts & VK_SAMPLE_COUNT_16_BIT)
-		{
-			return VK_SAMPLE_COUNT_16_BIT;
-		}
-
-		if (counts & VK_SAMPLE_COUNT_8_BIT)
-		{
-			return VK_SAMPLE_COUNT_8_BIT;
-		}
-
-		if (counts & VK_SAMPLE_COUNT_4_BIT)
-		{
-			return VK_SAMPLE_COUNT_4_BIT;
-		}
-
-		if (counts & VK_SAMPLE_COUNT_2_BIT)
-		{
-			return VK_SAMPLE_COUNT_2_BIT;
+			if (counts & sampleFlag)
+			{
+				return sampleFlag;
+			}
 		}
 
 		return VK_SAMPLE_COUNT_1_BIT;
@@ -913,68 +891,68 @@ namespace acid
 			m_transferFamily = m_graphicsFamily;
 		}
 
-		VkPhysicalDeviceFeatures physicalDeviceFeatures = {};
-		physicalDeviceFeatures.samplerAnisotropy = VK_TRUE;
-		physicalDeviceFeatures.shaderClipDistance = VK_TRUE;
-		physicalDeviceFeatures.shaderCullDistance = VK_TRUE;
-		physicalDeviceFeatures.fragmentStoresAndAtomics = VK_TRUE;
-		physicalDeviceFeatures.shaderStorageImageExtendedFormats = VK_TRUE;
-		physicalDeviceFeatures.shaderStorageImageWriteWithoutFormat = VK_TRUE;
-		physicalDeviceFeatures.vertexPipelineStoresAndAtomics = VK_TRUE;
-		physicalDeviceFeatures.fillModeNonSolid = VK_TRUE;
-		physicalDeviceFeatures.sampleRateShading = VK_TRUE;
-		physicalDeviceFeatures.wideLines = VK_TRUE;
+		VkPhysicalDeviceFeatures deviceFeatures = {};
+		deviceFeatures.sampleRateShading = VK_TRUE;
+		deviceFeatures.fillModeNonSolid = VK_TRUE;
+		deviceFeatures.wideLines = VK_TRUE;
+		deviceFeatures.samplerAnisotropy = VK_TRUE;
+		deviceFeatures.vertexPipelineStoresAndAtomics = VK_TRUE;
+		deviceFeatures.fragmentStoresAndAtomics = VK_TRUE;
+		deviceFeatures.shaderStorageImageExtendedFormats = VK_TRUE;
+		deviceFeatures.shaderStorageImageWriteWithoutFormat = VK_TRUE;
+		deviceFeatures.shaderClipDistance = VK_TRUE;
+		deviceFeatures.shaderCullDistance = VK_TRUE;
 
-		if (m_physicalDeviceFeatures.textureCompressionBC)
-		{
-			physicalDeviceFeatures.textureCompressionBC = VK_TRUE;
-		}
-		else if (m_physicalDeviceFeatures.textureCompressionASTC_LDR)
-		{
-			physicalDeviceFeatures.textureCompressionASTC_LDR = VK_TRUE;
-		}
-		else if (m_physicalDeviceFeatures.textureCompressionETC2)
-		{
-			physicalDeviceFeatures.textureCompressionETC2 = VK_TRUE;
-		}
-
-		if (m_physicalDeviceFeatures.tessellationShader)
-		{
-			physicalDeviceFeatures.tessellationShader = VK_TRUE;
-		}
-		else
-		{
-			Log::Error("Selected GPU does not support tessellation shaders!");
-		}
 
 		if (m_physicalDeviceFeatures.geometryShader)
 		{
-			physicalDeviceFeatures.geometryShader = VK_TRUE;
+			deviceFeatures.geometryShader = VK_TRUE;
 		}
 		else
 		{
 			Log::Error("Selected GPU does not support geometry shaders!");
 		}
 
+		if (m_physicalDeviceFeatures.tessellationShader)
+		{
+			deviceFeatures.tessellationShader = VK_TRUE;
+		}
+		else
+		{
+			Log::Error("Selected GPU does not support tessellation shaders!");
+		}
+
 		if (m_physicalDeviceFeatures.multiViewport)
 		{
-			physicalDeviceFeatures.multiViewport = VK_TRUE;
+			deviceFeatures.multiViewport = VK_TRUE;
 		}
 		else
 		{
 			Log::Error("Selected GPU does not support multi viewports!");
 		}
 
+		if (m_physicalDeviceFeatures.textureCompressionBC)
+		{
+			deviceFeatures.textureCompressionBC = VK_TRUE;
+		}
+		else if (m_physicalDeviceFeatures.textureCompressionASTC_LDR)
+		{
+			deviceFeatures.textureCompressionASTC_LDR = VK_TRUE;
+		}
+		else if (m_physicalDeviceFeatures.textureCompressionETC2)
+		{
+			deviceFeatures.textureCompressionETC2 = VK_TRUE;
+		}
+
 		VkDeviceCreateInfo deviceCreateInfo = {};
 		deviceCreateInfo.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
-		deviceCreateInfo.pEnabledFeatures = &physicalDeviceFeatures;
 		deviceCreateInfo.queueCreateInfoCount = static_cast<uint32_t>(queueCreateInfos.size());
 		deviceCreateInfo.pQueueCreateInfos = queueCreateInfos.data();
 		deviceCreateInfo.enabledLayerCount = static_cast<uint32_t>(m_instanceLayerList.size());
 		deviceCreateInfo.ppEnabledLayerNames = m_instanceLayerList.data();
 		deviceCreateInfo.enabledExtensionCount = static_cast<uint32_t>(m_deviceExtensionList.size());
 		deviceCreateInfo.ppEnabledExtensionNames = m_deviceExtensionList.data();
-
+		deviceCreateInfo.pEnabledFeatures = &deviceFeatures;
 		CheckVk(vkCreateDevice(m_physicalDevice, &deviceCreateInfo, nullptr, &m_logicalDevice));
 
 		vkGetDeviceQueue(m_logicalDevice, m_graphicsFamily, 0, &m_graphicsQueue);

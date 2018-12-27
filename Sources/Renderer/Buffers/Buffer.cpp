@@ -30,7 +30,6 @@ namespace acid
 		bufferCreateInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
 		bufferCreateInfo.queueFamilyIndexCount = static_cast<uint32_t>(queueFamily.size());
 		bufferCreateInfo.pQueueFamilyIndices = queueFamily.data();
-
 		Display::CheckVk(vkCreateBuffer(logicalDevice, &bufferCreateInfo, nullptr, &m_buffer));
 
 		// Allocates buffer memory.
@@ -41,10 +40,9 @@ namespace acid
 		memoryAllocateInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
 		memoryAllocateInfo.allocationSize = memoryRequirements.size;
 		memoryAllocateInfo.memoryTypeIndex = FindMemoryType(memoryRequirements.memoryTypeBits, properties);
-
 		Display::CheckVk(vkAllocateMemory(logicalDevice, &memoryAllocateInfo, nullptr, &m_bufferMemory));
 
-		vkBindBufferMemory(logicalDevice, m_buffer, m_bufferMemory, 0);
+		Display::CheckVk(vkBindBufferMemory(logicalDevice, m_buffer, m_bufferMemory, 0));
 	}
 
 	Buffer::~Buffer()
@@ -67,7 +65,7 @@ namespace acid
 			uint32_t memoryTypeBits = 1 << i;
 			bool isRequiredMemoryType = typeFilter & memoryTypeBits;
 
-			VkMemoryPropertyFlags properties = physicalDeviceMemoryProperties.memoryTypes[i].propertyFlags;
+			auto properties = physicalDeviceMemoryProperties.memoryTypes[i].propertyFlags;
 			bool hasRequiredProperties = (properties & requiredProperties) == requiredProperties;
 
 			if (isRequiredMemoryType && hasRequiredProperties)

@@ -13,7 +13,7 @@ namespace acid
 	{
 		auto logicalDevice = Display::Get()->GetLogicalDevice();
 
-		VkDescriptorSetLayout layouts[1] = {pipeline.GetDescriptorSetLayout()};
+		VkDescriptorSetLayout layouts[1] = { pipeline.GetDescriptorSetLayout() };
 
 		VkDescriptorSetAllocateInfo descriptorSetAllocateInfo = {};
 		descriptorSetAllocateInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
@@ -21,7 +21,6 @@ namespace acid
 		descriptorSetAllocateInfo.descriptorPool = m_descriptorPool;
 		descriptorSetAllocateInfo.descriptorSetCount = 1;
 		descriptorSetAllocateInfo.pSetLayouts = layouts;
-
 		Display::CheckVk(vkAllocateDescriptorSets(logicalDevice, &descriptorSetAllocateInfo, &m_descriptorSet));
 	}
 
@@ -39,9 +38,25 @@ namespace acid
 		vkUpdateDescriptorSets(logicalDevice, static_cast<uint32_t>(descriptorWrites.size()), descriptorWrites.data(), 0, nullptr);
 	}
 
+	void DescriptorSet::Update(const std::vector<WriteDescriptorSet> &descriptorWrites)
+	{
+		auto logicalDevice = Display::Get()->GetLogicalDevice();
+
+		std::vector<VkWriteDescriptorSet> descriptors = {};
+
+		for (auto &descriptorWrite : descriptorWrites)
+		{
+			auto descriptor = static_cast<VkWriteDescriptorSet>(descriptorWrite);
+			descriptor.pImageInfo = &descriptorWrite.imageInfo;
+			descriptor.pBufferInfo = &descriptorWrite.bufferInfo;
+			descriptors.emplace_back(descriptor);
+		}
+
+		vkUpdateDescriptorSets(logicalDevice, static_cast<uint32_t>(descriptors.size()), descriptors.data(), 0, nullptr);
+	}
+
 	void DescriptorSet::BindDescriptor(const CommandBuffer &commandBuffer)
 	{
-		VkDescriptorSet descriptors[1] = {m_descriptorSet};
-		vkCmdBindDescriptorSets(commandBuffer.GetCommandBuffer(), m_pipelineBindPoint, m_pipelineLayout, 0, 1, descriptors, 0, nullptr);
+		vkCmdBindDescriptorSets(commandBuffer.GetCommandBuffer(), m_pipelineBindPoint, m_pipelineLayout, 0, 1, &m_descriptorSet, 0, nullptr);
 	}
 }

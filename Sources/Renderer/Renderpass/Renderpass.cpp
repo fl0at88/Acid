@@ -16,8 +16,7 @@ namespace acid
 		// Attachments,
 		for (auto &image : renderpassCreate.GetImages())
 		{
-			VkSampleCountFlagBits imageSamples = image.IsMultisampled() ? samples : VK_SAMPLE_COUNT_1_BIT;
-
+			auto imageSamples = image.IsMultisampled() ? samples : VK_SAMPLE_COUNT_1_BIT;
 			VkAttachmentDescription attachment = {};
 			attachment.samples = imageSamples;
 			attachment.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
@@ -86,7 +85,6 @@ namespace acid
 				auto subpassDepthStencilReference = new VkAttachmentReference(); // FIXME: Fixes a SEGFAULT on Linux.
 				subpassDepthStencilReference->attachment = depthAttachment;
 				subpassDepthStencilReference->layout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
-
 				subpassDescription.pDepthStencilAttachment = subpassDepthStencilReference;
 			}
 
@@ -136,7 +134,6 @@ namespace acid
 		renderPassCreateInfo.pSubpasses = m_subpasses.data();
 		renderPassCreateInfo.dependencyCount = static_cast<uint32_t>(m_dependencies.size());
 		renderPassCreateInfo.pDependencies = m_dependencies.data();
-
 		Display::CheckVk(vkCreateRenderPass(logicalDevice, &renderPassCreateInfo, nullptr, &m_renderPass));
 	}
 

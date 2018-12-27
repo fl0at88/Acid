@@ -8,7 +8,7 @@
 
 namespace acid
 {
-	const uint32_t ParticleType::MAX_TYPE_INSTANCES = 512;
+	const uint32_t ParticleType::INSTANCE_STEPS = 128;
 	const float ParticleType::FRUSTUM_BUFFER = 1.4f;
 
 	std::shared_ptr<ParticleType> ParticleType::Resource(const std::shared_ptr<Texture> &texture, const uint32_t &numberOfRows, const Colour &colourOffset, const float &lifeLength, const float &stageCycles, const float &scale)
@@ -46,16 +46,19 @@ namespace acid
 		m_lifeLength(lifeLength),
 		m_stageCycles(stageCycles),
 		m_scale(scale),
+		m_maxInstances(0),
 		m_instances(0),
-		m_storageBuffer(StorageHandler()),
-		m_descriptorSet(DescriptorsHandler())
+		m_descriptorSet(DescriptorsHandler()),
+		m_storageInstances(StorageHandler())
 	{
 	}
 
 	void ParticleType::Update(const std::vector<Particle> &particles)
 	{
-		auto instanceDatas = std::vector<ParticleData>();
-		instanceDatas.resize(MAX_TYPE_INSTANCES);
+		// Calculates a max instance count over the time of the type. TODO: Allow decreasing max using a timer and average count over the delay.
+		uint32_t instances = INSTANCE_STEPS * static_cast<uint32_t>(std::ceil(static_cast<float>(particles.size()) / static_cast<float>(INSTANCE_STEPS)));
+		m_maxInstances = std::max(m_maxInstances, instances);
+		auto instanceDatas = std::vector<ParticleData>(m_maxInstances);
 		m_instances = 0;
 
 		for (auto &particle : particles)
@@ -68,13 +71,13 @@ namespace acid
 			instanceDatas[m_instances] = GetInstanceData(particle);
 			m_instances++;
 
-			if (m_instances >= instanceDatas.size())
+			if (m_instances >= m_maxInstances)
 			{
 				break;
 			}
 		}
 
-		m_storageBuffer.Push("data", *instanceDatas.data(), sizeof(ParticleData) * MAX_TYPE_INSTANCES);
+		m_storageInstances.Push(instanceDatas.data(), sizeof(ParticleData) * m_maxInstances);
 	}
 
 	bool ParticleType::CmdRender(const CommandBuffer &commandBuffer, const Pipeline &pipeline, UniformHandler &uniformScene)
@@ -86,7 +89,7 @@ namespace acid
 
 		// Updates descriptors.
 		m_descriptorSet.Push("UboScene", uniformScene);
-		m_descriptorSet.Push("Instances", m_storageBuffer);
+		m_descriptorSet.Push("Instances", m_storageInstances);
 		m_descriptorSet.Push("samplerColour", m_texture);
 		bool updateSuccess = m_descriptorSet.Update(pipeline);
 
@@ -132,8 +135,6 @@ namespace acid
 
 	ParticleData ParticleType::GetInstanceData(const Particle &particle)
 	{
-		ParticleData instanceData = {};
-
 		Matrix4 modelMatrix = Matrix4();
 		modelMatrix = modelMatrix.Translate(particle.GetPosition());
 
@@ -144,23 +145,22 @@ namespace acid
 		
 		modelMatrix[1][0] = Maths::Radians(particle.GetRotation());
 
-		instanceData.modelMatrix = modelMatrix;
-
-		instanceData.colourOffset = particle.GetParticleType()->GetColourOffset();
-
 		Vector4 offsets = Vector4();
 		offsets.m_x = particle.GetTextureOffset1().m_x;
 		offsets.m_y = particle.GetTextureOffset1().m_y;
 		offsets.m_z = particle.GetTextureOffset2().m_x;
 		offsets.m_w = particle.GetTextureOffset2().m_y;
-		instanceData.offsets = offsets;
 
 		Vector3 blend = Vector3();
 		blend.m_x = particle.GetTextureBlendFactor();
 		blend.m_y = particle.GetTransparency();
 		blend.m_z = static_cast<float>(particle.GetParticleType()->GetNumberOfRows());
-		instanceData.blend = blend;
 
+		ParticleData instanceData = {};
+		instanceData.modelMatrix = modelMatrix;
+		instanceData.colourOffset = particle.GetParticleType()->GetColourOffset();
+		instanceData.offsets = offsets;
+		instanceData.blend = blend;
 		return instanceData;
 	}
 }

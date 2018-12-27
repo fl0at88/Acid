@@ -19,7 +19,6 @@ namespace acid
 		commandBufferAllocateInfo.commandPool = commandPool;
 		commandBufferAllocateInfo.level = bufferLevel;
 		commandBufferAllocateInfo.commandBufferCount = 1;
-
 		Display::CheckVk(vkAllocateCommandBuffers(logicalDevice, &commandBufferAllocateInfo, &m_commandBuffer));
 
 		if (begin)
@@ -41,14 +40,15 @@ namespace acid
 		VkCommandBufferBeginInfo beginInfo = {};
 		beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
 		beginInfo.flags = usage;
-
 		Display::CheckVk(vkBeginCommandBuffer(m_commandBuffer, &beginInfo));
+
 		m_running = true;
 	}
 
 	void CommandBuffer::End()
 	{
 		Display::CheckVk(vkEndCommandBuffer(m_commandBuffer));
+
 		m_running = false;
 	}
 
@@ -75,8 +75,8 @@ namespace acid
 			VkFenceCreateInfo fenceCreateInfo = {};
 			fenceCreateInfo.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
 			fenceCreateInfo.flags = 0;
-
 			Display::CheckVk(vkCreateFence(logicalDevice, &fenceCreateInfo, nullptr, &fence));
+
 			createdFence = true;
 		}
 
